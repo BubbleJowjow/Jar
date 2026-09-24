@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Jar of Letters</title>
+<meta name="description" content="A little jar of love letters, waiting to be opened.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💌</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#fbf3e6;--gold:#f3d9a4;--rose:#d4577a;--tw:112px;--th:76px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;color:var(--cream);font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden;
+background:
+ radial-gradient(ellipse 60% 45% at 50% 20%,rgba(255,205,140,.34),transparent 70%),
+ radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,.6) 100%),
+ repeating-linear-gradient(90deg,rgba(0,0,0,.17) 0 2px,transparent 2px 120px),
+ repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 7px),
+ linear-gradient(180deg,#5b3423,#3a2016);
+background-attachment:fixed}
+main{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 16px 36px;text-align:center}
+h1{font-family:'Great Vibes',cursive;font-weight:400;font-size:clamp(2.8rem,9vw,4.4rem);line-height:1.1;margin:0;color:var(--gold);text-shadow:0 2px 16px rgba(0,0,0,.55)}
+.sub{margin:.3rem 0 0;font-style:italic;font-size:1.3rem;opacity:.88}
+
+/* jar */
+.jar{position:relative;margin-top:16px;width:clamp(230px,34vw,320px);aspect-ratio:300/360}
+.jar .shadow{position:absolute;left:6%;right:6%;bottom:-1%;height:7%;background:rgba(0,0,0,.55);filter:blur(10px);border-radius:50%}
+.jar svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.jar .back{z-index:1}.jar .front{z-index:3}
+#jarIn{position:absolute;z-index:2;left:10%;top:22%;width:80%;height:73%}
+#jarIn .note{width:36%;height:19%}
+
+/* paper notes */
+.note{position:absolute;padding:0;border:0;border-radius:3px;cursor:pointer;container-type:inline-size;
+ background:linear-gradient(135deg,var(--p1),var(--p2));box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.note::before{content:"";position:absolute;inset:0;border-radius:inherit;
+ background:linear-gradient(180deg,transparent 48%,rgba(0,0,0,.14) 50%,rgba(255,255,255,.45) 52%,transparent 57%)}
+.note::after{content:"";position:absolute;top:0;bottom:0;left:43%;width:14%;background:var(--rib);opacity:.94}
+.note i{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-52%);font-style:normal;font-size:30cqw;line-height:1;color:#fff;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+.note:hover,.note:focus-visible{outline:none;box-shadow:0 0 0 2px rgba(255,226,170,.95),0 0 16px rgba(255,200,120,.9)}
+.note.flying{position:fixed;left:0;top:0;z-index:50;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+
+/* table */
+.hint{margin:18px 0 0;font-size:1.15rem;opacity:.8;font-style:italic}
+#count{margin:.2rem 0 0;font-size:1rem;opacity:.65}
+.desk{margin-top:22px;width:min(920px,100%);display:flex;flex-wrap:wrap;justify-content:center;gap:24px 16px;min-height:110px}
+.deskhint{width:100%;align-self:center;opacity:.5;font-style:italic;font-size:1.15rem;margin:30px 0}
+.slot{display:flex;flex-direction:column;align-items:center;gap:12px;width:calc(var(--tw) + 26px)}
+.slot .note{position:relative;width:var(--tw);height:var(--th);transform:rotate(var(--r))}
+.reset{margin-top:auto;padding-top:34px;background:none;border:0;color:var(--cream);opacity:.45;font:italic 1rem 'Cormorant Garamond',serif;cursor:pointer;text-decoration:underline}
+.reset:hover{opacity:.9}
+
+/* reading a letter */
+#veil{position:fixed;inset:0;z-index:40;background:rgba(20,6,10,.72);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .5s}
+#veil.on{opacity:1;pointer-events:auto}
+#letter{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px;pointer-events:none;visibility:hidden}
+#letter.on{visibility:visible}
+.paper{position:relative;width:min(460px,100%);max-height:84vh;overflow:auto;padding:34px 30px 26px 56px;text-align:left;color:#4a2a2e;pointer-events:auto;border-radius:4px;
+ background:repeating-linear-gradient(transparent 0 33px,rgba(190,120,130,.22) 33px 34px),linear-gradient(135deg,#fffaf0,#f6e8d0);
+ box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 0 40px rgba(200,150,110,.25)}
+.paper::before{content:"";position:absolute;left:40px;top:0;bottom:0;width:2px;background:rgba(212,87,122,.35)}
+.paper .to{font:600 1.5rem Caveat,cursive;margin:0 0 .5rem}
+.paper .body{font:500 1.5rem/34px Caveat,cursive;margin:0;white-space:pre-line}
+.paper .sig{font:600 1.55rem Caveat,cursive;text-align:right;margin:14px 0 0;color:#a8395c}
+.x{position:absolute;top:8px;right:10px;width:34px;height:34px;border:0;background:none;font-size:1.7rem;line-height:1;color:#a8395c;cursor:pointer;border-radius:50%}
+.x:hover,.x:focus-visible{background:rgba(168,57,92,.12);outline:none}
+.paper.unfold{animation:unfold .75s cubic-bezier(.3,.8,.3,1) both}
+.paper.fold{animation:unfold .45s cubic-bezier(.6,0,.7,.2) reverse both}
+@keyframes unfold{0%{transform:scale(.45,.05);opacity:0}25%{opacity:1}55%{transform:scale(1,.1)}100%{transform:none;opacity:1}}
+
+.petal{position:fixed;top:-6vh;z-index:0;pointer-events:none;width:var(--s);height:calc(var(--s)*1.3);opacity:.45;border-radius:80% 0 80% 0;
+ background:radial-gradient(circle at 30% 30%,#ff9fb8,#c9375f);animation:fall linear infinite}
+@keyframes fall{to{transform:translate(70px,112vh) rotate(540deg)}}
+
+@media (max-width:560px){:root{--tw:92px;--th:62px}.paper{padding:32px 20px 22px 46px}.paper::before{left:32px}.paper .body{font-size:1.4rem}}
+@media (prefers-reduced-motion:reduce){.petal{display:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>A Jar of Letters</h1>
+  <p class="sub" id="dedication"></p>
+
+  <div class="jar" id="jar">
+    <div class="shadow"></div>
+    <svg class="back" viewBox="0 0 300 360" aria-hidden="true">
+      <defs><linearGradient id="gl" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".24"/><stop offset=".5" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity=".2"/></linearGradient></defs>
+      <path d="M78 40H222V66C266 78 282 108 282 150V318C282 344 264 352 240 352H60C36 352 18 344 18 318V150C18 108 34 78 78 66Z" fill="url(#gl)"/>
+      <ellipse cx="150" cy="42" rx="72" ry="10" fill="rgba(20,8,4,.35)"/>
+    </svg>
+    <div id="jarIn"></div>
+    <svg class="front" viewBox="0 0 300 360" aria-hidden="true">
+      <path d="M78 40H222V66C266 78 282 108 282 150V318C282 344 264 352 240 352H60C36 352 18 344 18 318V150C18 108 34 78 78 66Z" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2.5"/>
+      <ellipse cx="150" cy="40" rx="72" ry="10" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="3"/>
+      <path d="M42 130C38 200 40 270 46 320" stroke="rgba(255,255,255,.36)" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <path d="M258 150C260 200 258 250 256 290" stroke="rgba(255,255,255,.18)" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M80 62Q150 82 220 62" stroke="#c9375f" stroke-width="9" fill="none" stroke-linecap="round"/>
+      <path d="M150 72C108 36 88 80 122 86Z" fill="#d4577a"/><path d="M150 72C192 36 212 80 178 86Z" fill="#d4577a"/>
+      <path d="M146 80L124 114L140 107L146 120Z" fill="#b02c52"/><path d="M154 80L176 114L160 107L154 120Z" fill="#b02c52"/>
+      <circle cx="150" cy="74" r="8" fill="#b02c52"/>
+    </svg>
+  </div>
+
+  <p class="hint">Choose a letter from the jar</p>
+  <p id="count"></p>
+
+  <section class="desk" id="desk" aria-label="Opened letters">
+    <p class="deskhint" id="deskhint">Letters you open will rest here on the table.</p>
+  </section>
+
+  <button class="reset" id="reset" type="button">Put every letter back in the jar</button>
+</main>
+
+<div id="veil"></div>
+<div id="letter" role="dialog" aria-modal="true" aria-label="A love letter">
+  <article class="paper" id="paper">
+    <button class="x" id="close" type="button" aria-label="Fold the letter">&times;</button>
+    <p class="to" id="to"></p>
+        <p class="body" id="body"></p>
+    <p class="sig" id="sig"></p>
+  </article>
+</div>
+
+<script>
+/* ============ EDIT YOUR LETTERS HERE ============ */
+const TO   = "Alli";        // who the letters are for
+const FROM = "Jo";      // who is writing
+const LETTERS = [
+ "Love, i've been happier since u came. Kahit nung hindi pa naman tayo, ang gaan na ng pakiramdam ko kasi di ko kailangang mag isip gabi-gabi kung andyan ka pa din ba kinabukasan o kung may iba ka ba dyan. Kampante ako kahit di tayo lagi magkasama, and thats' one thing that i love about us. I love that I can trust u. I love you so muchhhh ",
+ "I can't wait to see you again, love. I miss you so much. How I wish na magkasama na lang tayo palagi para magawa natin yung mga bagay na gusto nating gawin. I can't wait to to hug you and kiss you again. I love you more than words can say.",
+ "Thank you for the little things: the way you make everything lighter, the way you make me laugh and feel calm, the way you remember how much i love blue, and many more. Small things matter, love. We may not be together everyday, but i love you everydayyy. You're always asking if you're loving me right, but you are. I love the way you love me.",
+ "You'll always be my favorite person to be with. Kapag may mga places akong napupuntahan or may mga food akong natitikman, I wish i got to share it with u. Hindi na ako makapaghintay na mag live in tayo para matry na natin lahat together. I'm looking foward to it. Naiimagine ko na kung pano kita susuyuin kapag nagsusungit ka kapag dumating yung time na yon. Di na tayo makakatulog ng magkaaway HAHAHAHA Konting tiis na lang love at mapapaglutuan na kita everydayyyy.",
+ "Sorry kung nasusungitan kita minsan, love, sa'yo ko natutunan yon HAHAHHAH. I know na di naman ako dapat mainis kaagad minsan pero di ko maiwasan, nasasabayan pa kita. Sorry love. I'll do better. Wag ka mananawa plsss. Madami pa tayong mga ganong moments na pagdadaanan, at alam ko naman na maaayos din natin yon. Please be patient with me, love, hehe. Super sensitive ko talaga most of the time, sana humaba na ang pasensya mo sa panunuyo sa'kin HAHAHAHHAHA ",
+ "Love, kapag pagod ako, gusto ko na lang umuwi sa'yo. Kapag nafufrustrate ako, gusto ko na lang umuwi sa'yo. Kapag naistress ako, gusto ko na lang umuwi sa'yo. Kapag naooverwhelmed ka, gusto ko na lang umuwi sa'yo. Kapag nagkakainisan tayo, gusto ko na lang umuwi sa'yo. Kasi love, you are my home. Gusto ko umuwi sa'yo palagiiii.",
+ "I want you to always remember that I love you, kahit pa nagsusungit ako sa'yo. Love kita kahit kahit sinusungutan mo ako. Love kita kahit magkaaway tayo at di kita nirereplyan. Love kita kahit tulog ka or tinulugan mo ako. Love kita kahit ano pa yan. Lovee kita palagiii",
+ "Ikaw lang ang gusto kong mahalin. Ikaw lang ang paborito kong ipagluto ng sinigang na maasim. Ikaw ang gusto kong pagsilbihan at asikasuhin. Ikaw ang gusto kong kausapin every after training. Ikaw ang gusto kong kwentuhan ng mga bagay bagay kahit pa walang kwenta yan HAHAHAHA. Ikaw lang sadya, wala namang iba at wala naman akong balak humanap ng iba.",
+ "It's been six months simula nung nagswipe right ka sa'kin HAHAHAHA. You've been part of my routine,my thoughts, my life and everything. This six months have been the happiest and calmest months. Thank you for existing, love. I'm so lucky that you chose me. ",
+ "Loving you is one of the easist things I've ever done. Loving you is the best thing I've ever done. Di to kayang i chatgpt HAHAHAHA I hope i'm loving you the way you deserve to be loved. I hope i'm making you feel loved and appreciated. I hope i'm making you feel safe and happy. I hope i'm making you feel like home. I hope you stay with me forever.",
+ "One thing is for sure, palagi kong sinasabi to sa'yo. Pipiliin at mamahalin kita palagi. We'll make it work, okay? Hindi pwedeng hindi kasi iiyak talaga ako AHAHAHA I love you palagi, my Alli! See you next month. I miss you so muchhhhh. "
+];
+/* ================================================= */
+
+const $ = s => document.querySelector(s);
+const jarIn=$('#jarIn'), desk=$('#desk'), veil=$('#veil'), lay=$('#letter'), paper=$('#paper');
+const KEY='jar-of-letters-v1', RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const D=t=>RM?1:t, wait=ms=>new Promise(r=>setTimeout(r,ms));
+const PAL=[['#fffaf0','#f1e2c8','#d4577a'],['#fde7ec','#f6c9d4','#b23a5e'],['#f7efe1','#e6d3b3','#c9964a'],['#fff3ee','#f3d3c8','#a94a6a']];
+const rnd=(i,k)=>{const x=Math.sin(i*97.13+k*31.7)*10000;return x-Math.floor(x)};
+
+let opened=[]; try{opened=JSON.parse(localStorage.getItem(KEY)||'[]').filter(i=>LETTERS[i])}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(opened))}catch(e){}};
+const notes=[];
+
+$('#dedication').textContent='for '+TO;
+function count(){
+  $('#count').textContent = opened.length===LETTERS.length ? 'Every letter has been opened \u2665' : opened.length+' of '+LETTERS.length+' letters opened';
+  $('#deskhint').hidden = opened.length>0;
+}
+
+function mk(i){
+  const p=PAL[i%PAL.length], b=document.createElement('button');
+  b.type='button'; b.className='note';
+  b.setAttribute('aria-label','Open a letter');
+  b.style.cssText=`--p1:${p[0]};--p2:${p[1]};--rib:${p[2]}`;
+  b.innerHTML='<i>\u2665</i>'; b.onclick=()=>openLetter(i);
+  return b;
+}
+
+function makeSlot(i){
+  const s=document.createElement('div'); s.className='slot';
+  const rot=Math.round((rnd(i,5)-.5)*22), n=mk(i);
+  n.classList.add('ontable'); n.style.setProperty('--r',rot+'deg'); n.dataset.rot=rot;
+  s.append(n); notes[i].el=n; notes[i].slot=s; notes[i].inJar=false;
+  return s;
+}
+
+/* fill the jar */
+(()=>{
+  const rows=[]; let left=LETTERS.length, r=0;
+  while(left>0){const c=Math.min(left,r?3:2); rows.push(c); left-=c; r++;}
+  let idx=0;
+  rows.forEach((c,r)=>{ for(let j=0;j<c;j++){
+    const i=idx++; notes[i]={};
+    const y=(rows.length>1?12+r*(76/(rows.length-1)):50)+(rnd(i,1)-.5)*5;
+    const x=50+(j-(c-1)/2)*30+(rnd(i,3)-.5)*8, rot=Math.round((rnd(i,2)-.5)*44);
+    if(opened.includes(i)) continue;
+    const n=mk(i); n.dataset.rot=rot;
+    n.style.left=x+'%'; n.style.top=y+'%'; n.style.transform=`translate(-50%,-50%) rotate(${rot}deg)`;
+    n.style.zIndex=Math.floor(rnd(i,4)*10);
+    jarIn.append(n); notes[i]={el:n,inJar:true};
+  }});
+  opened.forEach(i=>desk.append(makeSlot(i)));
+  count();
+})();
+
+/* geometry + animation helpers */
+function geo(el){const r=el.getBoundingClientRect();return{cx:r.left+r.width/2,cy:r.top+r.height/2,w:el.offsetWidth,h:el.offsetHeight,rot:+el.dataset.rot||0}}
+const kf=g=>({left:(g.cx-g.w/2)+'px',top:(g.cy-g.h/2)+'px',width:g.w+'px',height:g.h+'px',transform:`rotate(${g.rot}deg)`});
+const go=(el,frames,ms,ease)=>el.animate(frames.map(kf),{duration:ms,easing:ease||'cubic-bezier(.4,0,.2,1)',fill:'forwards'}).finished;
+
+let busy=false, cur=null;
+
+async function openLetter(i){
+  if(busy) return; busy=true;
+  const n=notes[i], from=geo(n.el), wasJar=n.inJar;
+  const f=mk(i); f.classList.add('flying'); f.tabIndex=-1; f.dataset.rot=from.rot;
+  Object.assign(f.style,kf(from)); document.body.append(f);
+  if(wasJar){ n.el.remove(); } else { n.el.style.visibility='hidden'; }
+  veil.classList.add('on');
+
+  const cw=Math.min(210,innerWidth*.52), to={cx:innerWidth/2,cy:innerHeight/2,w:cw,h:cw*.68,rot:0};
+  const frames=[from];
+  if(wasJar){ const j=$('#jar').getBoundingClientRect();
+    frames.push({cx:j.left+j.width/2,cy:j.top+j.height*.05,w:from.w*1.9,h:from.h*1.9,rot:-9}); }
+  frames.push(to);
+  await go(f,frames,D(wasJar?1100:750));
+  f.style.display='none';
+
+  $('#to').textContent='Dear '+TO+',';
+  $('#body').textContent=LETTERS[i];
+  $('#sig').textContent='Forever yours, '+FROM+' \u2665';
+  paper.scrollTop=0; paper.className='paper unfold'; lay.classList.add('on');
+  cur={i,f,to}; await wait(D(750)); busy=false; $('#close').focus({preventScroll:true});
+}
+
+async function closeLetter(){
+  if(busy||!cur) return; busy=true;
+  const {i,f,to}=cur, n=notes[i];
+  paper.className='paper fold'; await wait(D(450));
+  lay.classList.remove('on'); paper.className='paper';
+
+  if(!n.slot){ const s=makeSlot(i); opened.push(i); save(); $('#deskhint').hidden=true; desk.append(s); n.el.style.visibility='hidden'; }
+  n.slot.scrollIntoView({block:'nearest'});
+  f.getAnimations().forEach(a=>a.cancel()); Object.assign(f.style,kf(to)); f.style.display='';
+  const tgt=geo(n.el);
+  await go(f,[to,{...to,cy:to.cy-16,w:to.w*1.06,h:to.h*1.06,rot:7},tgt],D(1000),'cubic-bezier(.35,.1,.25,1)');
+  n.el.style.visibility=''; f.remove();
+  if(!RM) n.el.animate([{transform:`rotate(${tgt.rot}deg) scale(1.1)`},{transform:`rotate(${tgt.rot}deg) scale(1)`}],{duration:280});
+  veil.classList.remove('on'); cur=null; count(); busy=false;
+}
+
+veil.onclick=closeLetter; $('#close').onclick=closeLetter;
+addEventListener('keydown',e=>{if(e.key==='Escape') closeLetter()});
+$('#reset').onclick=()=>{ if(confirm('Put all the letters back in the jar?')){ try{localStorage.removeItem(KEY)}catch(e){} location.reload(); } };
+
+/* drifting petals */
+if(!RM) for(let k=0;k<14;k++){
+  const p=document.createElement('span'); p.className='petal';
+  p.style.cssText=`left:${rnd(k,9)*100}%;animation-duration:${16+rnd(k,3)*16}s;animation-delay:${-rnd(k,4)*24}s;--s:${8+rnd(k,6)*10}px`;
+  document.body.append(p);
+}
+</script>
+</body>
+</html>
